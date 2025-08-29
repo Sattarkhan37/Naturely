@@ -2,3 +2,4 @@
 hidden
 .prettierrc
 node_modules
+config.env
