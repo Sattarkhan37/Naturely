@@ -8,11 +8,11 @@ const tours = JSON.parse(
 
 const router = express.Router();
 
-router.param('id',tourController.checkId)
+router.param('id', tourController.checkId);
 router
   .route('/')
   .get(tourController.getAllTours)
-  .post(tourController.createTour);
+  .post(tourController.checkBody, tourController.createTour);
 router
   .route('/:id')
   .get(tourController.getTour)
