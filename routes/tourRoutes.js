@@ -3,12 +3,12 @@ const tourController = require('./../controllers/tourController.js');
 
 const express = require('express');
 const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
+  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
 );
 
 const router = express.Router();
 
-router.param('id', tourController.checkId);
+// router.param('id', tourController.checkId);
 router
   .route('/')
   .get(tourController.getAllTours)
