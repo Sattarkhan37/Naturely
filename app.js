@@ -4,8 +4,6 @@ const app = express();
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 //1) Middleware
-console.log(process.env.NODE_ENV);
-
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
