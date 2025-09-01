@@ -72,18 +72,25 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
-// tourSchema.post('save', function (doc, next) {
-//   console.log(doc);
+tourSchema.post('save', function (doc, next) {
+  console.log(doc);
 
-//   next();
-// });
+  next();
+});
 //Query Middleware .find()
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   next();
 });
-tourSchema.post(/^find/, function (docs) {
+tourSchema.post(/^find/, function (docs, next) {
   // console.log(docs);
+  next();
+});
+
+//Aggration middleware
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // console.log('Aggregation pipeline after adding match:', this.pipeline());
   next();
 });
 const Tour = mongoose.models.Tour || mongoose.model('Tour', tourSchema);
