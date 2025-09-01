@@ -1,14 +1,12 @@
-const fs = require('fs');
-const tourController = require('./../controllers/tourController.js');
-
 const express = require('express');
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
-);
+const tourController = require('./../controllers/tourController.js');
 
 const router = express.Router();
 
 // router.param('id', tourController.checkId);
+router
+  .route('/top-5-tours')
+  .get(tourController.aliasTopTours, tourController.getAllTours);
 router
   .route('/')
   .get(tourController.getAllTours)
