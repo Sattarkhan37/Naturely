@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ['user', 'guid', 'lead-guid', 'admin'],
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
     default: 'user',
   },
   password: {
@@ -36,14 +36,20 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords do not match',
     },
   },
-  passwordChangedAt: { type: Date, default: Date.now() },
-  PasswordResetToken: String,
-  PasswordResetExpires: Date,
+  passwordChangedAt: { type: Date },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 userSchema.methods.correctPassword = async function (
@@ -64,13 +70,13 @@ userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
 };
 userSchema.methods.createPasswordResetToken = function () {
   const resettoken = crypto.randomBytes(32).toString('hex');
-  this.PasswordResetToken = crypto
+  this.passwordResetToken = crypto
     .createHash('sha256')
     .update(resettoken)
     .digest('hex');
-  console.log({ resettoken }, this.PasswordResetToken);
+  console.log({ resettoken }, this.passwordResetToken);
 
-  this.PasswordResetExpires = Date.now() + 10 * 60 * 1000;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resettoken;
 };
 const User = mongoose.model('User', userSchema);
