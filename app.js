@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongosanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 const golbalErorrHandler = require('./controllers/errorController');
 const app = express();
 const tourRouter = require('./routes/tourRoutes');
@@ -28,6 +29,20 @@ app.use(express.json({ limit: '10kb' }));
 app.use(mongosanitize());
 // Data sanitization against XSS
 app.use(xss());
+
+//Prevent Parameter Pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsAverage',
+      'ratingsQuantity',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  }),
+);
 //Serving static files
 app.use(express.static(`${__dirname}/public`));
 //Test middleware
