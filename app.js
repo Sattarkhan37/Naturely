@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const AppError = require('./utils/appError');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongosanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 const golbalErorrHandler = require('./controllers/errorController');
 const app = express();
 const tourRouter = require('./routes/tourRoutes');
@@ -22,6 +24,10 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 //Body parser,reading data from thebody into req.body
 app.use(express.json({ limit: '10kb' }));
+//data sanitization against NoSQL query injection
+app.use(mongosanitize());
+// Data sanitization against XSS
+app.use(xss());
 //Serving static files
 app.use(express.static(`${__dirname}/public`));
 //Test middleware
